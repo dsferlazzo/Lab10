@@ -7,7 +7,10 @@ package it.polito.tdp.rivers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.rivers.model.Caratteristiche;
 import it.polito.tdp.rivers.model.Model;
+import it.polito.tdp.rivers.model.River;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,7 +28,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxRiver"
-    private ComboBox<?> boxRiver; // Value injected by FXMLLoader
+    private ComboBox<River> boxRiver; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtStartDate"
     private TextField txtStartDate; // Value injected by FXMLLoader
@@ -47,6 +50,25 @@ public class FXMLController {
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
+    
+    @FXML
+    void handleRiver(ActionEvent event) {
+    	River r = boxRiver.getValue();
+    	Caratteristiche c = model.getCaratteristiche(r);
+    	txtStartDate.setText(c.getMin().toString());
+    	txtEndDate.setText(c.getMax().toString());
+    	txtNumMeasurements.setText(c.getnMisurazioni()+"");
+    	txtFMed.setText(c.getAvgFlusso()+"");
+    }
+    
+    @FXML
+    void handleSimulazione(ActionEvent event) {
+    	txtResult.clear();
+    	double k = Double.parseDouble(txtK.getText());	//DA IMPLEMENTARE CONTROLLO DELL'INPUT
+    	River r = boxRiver.getValue();
+    	String s = model.svolgiSimulazione(k, r);
+    	txtResult.appendText(s);
+    }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -62,5 +84,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxRiver.getItems().addAll(model.getRivers());
+    	
     }
 }
